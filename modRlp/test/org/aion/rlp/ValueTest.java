@@ -1,4 +1,4 @@
-/*******************************************************************************
+/*
  * Copyright (c) 2017-2018 Aion foundation.
  *
  *     This file is part of the aion network project.
@@ -31,18 +31,18 @@
  *     Samuel Neves through the BLAKE2 implementation.
  *     Zcash project team.
  *     Bitcoinj team.
- ******************************************************************************/
+ */
 package org.aion.rlp;
 
-import org.junit.Test;
-
-import org.spongycastle.util.encoders.Hex;
+import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigInteger;
-
 import java.util.Arrays;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.spongycastle.util.encoders.Hex;
 
 public class ValueTest {
 
@@ -67,12 +67,12 @@ public class ValueTest {
         Value num = new Value(1);
         assertEquals(num.asInt(), 1);
 
-        Value inter = new Value(new Object[]{1});
-        Object[] interExp = new Object[]{1};
+        Value inter = new Value(new Object[] {1});
+        Object[] interExp = new Object[] {1};
         assertTrue(new Value(inter.asObj()).cmp(new Value(interExp)));
 
-        Value byt = new Value(new byte[]{1, 2, 3, 4});
-        byte[] bytExp = new byte[]{1, 2, 3, 4};
+        Value byt = new Value(new byte[] {1, 2, 3, 4});
+        byte[] bytExp = new byte[] {1, 2, 3, 4};
         assertTrue(Arrays.equals(byt.asBytes(), bytExp));
 
         Value bigInt = new Value(BigInteger.valueOf(10));
@@ -80,16 +80,24 @@ public class ValueTest {
         assertEquals(bigInt.asBigInt(), bigExp);
     }
 
-
     @Test
     public void longListRLPBug_1() {
 
-        String testRlp = "f7808080d387206f72726563748a626574656c676575736580d387207870726573738a70726564696361626c658080808080808080808080";
+        String testRlp =
+                "f7808080d387206f72726563748a626574656c676575736580d387207870726573738a70726564696361626c658080808080808080808080";
 
         Value val = Value.fromRlpEncoded(Hex.decode(testRlp));
 
         assertEquals(testRlp, Hex.toHexString(val.encode()));
     }
 
+    @Test
+    public void testFromRlpEncoded_wNull() {
+        assertThat(Value.fromRlpEncoded(null)).isNull();
+    }
 
+    @Test
+    public void testNewValue_wNull() {
+        assertThat(new Value(null).asObj()).isNull();
+    }
 }
